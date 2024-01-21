@@ -1,3 +1,5 @@
+
+///[ModelType] enum for model names associated with OpenAi
 enum ModelType {
   gpt3_5Turbo,
   gpt3_5Turbo_1106,
@@ -5,6 +7,7 @@ enum ModelType {
   gpt4VisionPreview
 }
 
+///[modelTypeSwitch] model enum value initializer
 String modelTypeSwitch(ModelType model){
   switch(model){
     case ModelType.gpt3_5Turbo:
