@@ -7,7 +7,7 @@ class HeaderModel {
   final ContentTypes contentType;
 
   ///[authorizationKey] authorization key for auth parameter
-  final String? authorizationKey = OpenAiService().openAiApiKey as String;
+  final String? authorizationKey = OpenAiServiceManager().openAiApiKey as String;
 
 
   HeaderModel({required this.contentType}){
@@ -18,7 +18,7 @@ class HeaderModel {
   }
 
   ///[toMap] map converter for headerModel
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     String contentTypeString = contentTypeSwitch(contentType);
     return {
       "Content-Type": contentTypeString,
