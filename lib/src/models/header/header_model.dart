@@ -18,7 +18,7 @@ class HeaderModel {
   }
 
   ///[toMap] map converter for headerModel
-  Map<String, dynamic> toMap() {
+  Map<String, String> toMap() {
     String contentTypeString = contentTypeSwitch(contentType);
     return {
       "Content-Type": contentTypeString,

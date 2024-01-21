@@ -21,7 +21,7 @@ class PayloadModel {
   PayloadModel(
       {required this.model,
       this.role = RoleType.user,
-      this.maxToken = 100,
+      this.maxToken = 200,
       required this.prompt,
       this.base64Image});
 }

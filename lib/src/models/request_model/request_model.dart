@@ -17,22 +17,15 @@ class RequestModel {
   final String prompt;
 
   ///[imagePath] image path provided by the user (locally)
-  final String? imagePath;
+  final File? imageFile;
 
-  RequestModel({required this.model, required this.prompt, this.imagePath});
+  RequestModel({required this.model, required this.prompt, this.imageFile});
 
   ///[payloadEncoder] final encoded json containing payload data
   String payloadEncoder(PayloadStructureType payloadStructureType) {
-    //edgeCase
-    if (imagePath == null &&
-        payloadStructureType == PayloadStructureType.imageInputChatCompletion) {
-      log("CANNOT USE IMAGE INPUT PAYLOAD STRUCTURE AS IMAGE PARAMETER IS NULL");
-      return '';
-    }
     //payload model obj
     PayloadModel payloadModel =
-        PayloadModel(model: model, prompt: prompt, base64Image: _imageToBase64(imagePath));
-
+        PayloadModel(model: model, prompt: prompt, base64Image: _imageToBase64(imageFile));
     //converted payload model obj into respective structure
     Map<String, dynamic> payloadMap = payloadStructureTypeSwitch(
       payloadStructureType: payloadStructureType,
@@ -43,7 +36,7 @@ class RequestModel {
   }
 
   ///[headerEncoder] final map containing header data
-  Map<String, dynamic> headerEncoder(){
+  Map<String, String> headerEncoder(){
     //header model object
     HeaderModel headerModel = HeaderModel(contentType: ContentTypes.applicationJson);
 
@@ -55,15 +48,13 @@ class RequestModel {
   }
 
   ///[_imageToBase64] method for converting image file into base64String
-  String? _imageToBase64(String? imagePath) {
-    if(imagePath == null) return null;
-
-    //imagePath to file
-    File imageFile = File(imagePath);
+  String? _imageToBase64(File? imageFile) {
+    print('entered $imageFile');
+    if(imageFile == null) return null;
 
     // Read the image file as bytes
-    Uint8List imageBytes = imageFile.readAsBytesSync();
-
+    List<int> imageBytes = imageFile.readAsBytesSync();
+    print('fucked');
     // Encode the image bytes to Base64
     String base64String = base64Encode(imageBytes);
 
