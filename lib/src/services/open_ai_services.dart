@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:typed_data';
 import 'package:http/http.dart' as http;
 import '../../gpt_module_package.dart';
@@ -54,4 +55,14 @@ class OpenAiServices {
     //response as output
     return _response;
   }
+
+  ///[responseContent] map out the actual content from response.
+  String responseContent(){
+    //mapping out
+    Map<String, dynamic> data = jsonDecode(_response.body);
+
+    //only content returned
+    return data['choices'][0]['message']['content'];
+  }
+
 }
