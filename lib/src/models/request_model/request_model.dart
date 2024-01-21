@@ -1,6 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
-import 'dart:io';
 import 'dart:typed_data';
 import 'package:gpt_module_package/src/models/header/enum/content_type_enum.dart';
 import 'package:gpt_module_package/src/models/header/header_model.dart';
@@ -17,15 +15,20 @@ class RequestModel {
   final String prompt;
 
   ///[imagePath] image path provided by the user (locally)
-  final File? imageFile;
+  final dynamic imageContent;
 
-  RequestModel({required this.model, required this.prompt, this.imageFile});
+  RequestModel({required this.model, required this.prompt, this.imageContent});
 
   ///[payloadEncoder] final encoded json containing payload data
-  String payloadEncoder(PayloadStructureType payloadStructureType) {
+  Future<String> payloadEncoder(
+      PayloadStructureType payloadStructureType) async {
+    //formatted image
+    String? image = _imageFormat(imageContent);
+
     //payload model obj
     PayloadModel payloadModel =
-        PayloadModel(model: model, prompt: prompt, base64Image: _imageToBase64(imageFile));
+        PayloadModel(model: model, prompt: prompt, base64Image: image);
+
     //converted payload model obj into respective structure
     Map<String, dynamic> payloadMap = payloadStructureTypeSwitch(
       payloadStructureType: payloadStructureType,
@@ -36,28 +39,32 @@ class RequestModel {
   }
 
   ///[headerEncoder] final map containing header data
-  Map<String, String> headerEncoder(){
+  Map<String, String> headerEncoder() {
     //header model object
-    HeaderModel headerModel = HeaderModel(contentType: ContentTypes.applicationJson);
+    HeaderModel headerModel =
+        HeaderModel(contentType: ContentTypes.applicationJson);
 
     //edgeCase
-    if(headerModel.authorizationKey == null) return {};
+    if (headerModel.authorizationKey == null) return {};
 
     //converted to map
     return headerModel.toMap();
   }
 
-  ///[_imageToBase64] method for converting image file into base64String
-  String? _imageToBase64(File? imageFile) {
-    print('entered $imageFile');
-    if(imageFile == null) return null;
+  ///[_imageFormat] method for converting image file into base64String
+  String? _imageFormat(dynamic content) {
+    if (content != null) {
+      //final imageOutput
 
-    // Read the image file as bytes
-    List<int> imageBytes = imageFile.readAsBytesSync();
-    print('fucked');
-    // Encode the image bytes to Base64
-    String base64String = base64Encode(imageBytes);
-
-    return base64String;
+      //network image
+      if (content is String) {
+        return content;
+      }
+      //local image
+      else if (content is Uint8List) {
+        return base64Encode(content);
+      }
+    }
+    return null;
   }
 }
